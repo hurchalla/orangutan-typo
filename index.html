@@ -12,18 +12,19 @@
     
     <p id="fix-your-typos">Don't be a monkey. Fix your typos!</p>
 
-    <!-- Corruption Chance Controls -->
-    <div>
-      <label for="corruption-chance">Typo Chance:</label>
-      <input type="range" id="corruption-chance" min="0" max="100" value="10">
-      <span id="corruption-chance-value">10%</span>
-    </div>
+
 
     <!-- Game UI Elements -->
     <div id="words-display"></div>
 
     <div id="progress-container">
       <span id="wpm">WPM: 0.0</span>
+      <!-- Corruption Chance Controls -->
+      <div id="corruption-container">
+          <label for="corruption-chance">Typo Chance:</label>
+          <input type="range" id="corruption-chance" min="0" max="50" value="7">
+          <span id="corruption-chance-value">7%</span>
+      </div>
       <span id="timer">Time: 0s</span>
     </div>
 
