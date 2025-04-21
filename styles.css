@@ -13,6 +13,11 @@ body {
   width: 100%;
 }
 
+#corruption-container {
+  margin-bottom: 20px;
+  margin-top: 7px;
+}
+
 #words-display {
   font-size: 36px; /* Larger font size for words */
   line-height: 44px;
