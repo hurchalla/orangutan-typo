@@ -1,0 +1,63 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+#game-container {
+  text-align: center;
+  max-width: 800px;
+  width: 100%;
+}
+
+#words-display {
+  font-size: 36px; /* Larger font size for words */
+  line-height: 44px;
+  margin-bottom: 20px;
+  text-align: left;
+  white-space: nowrap; /* Prevent wrapping */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  user-select: none;
+}
+
+#wpm, #timer {
+  font-size: 28px; /* Increased font size for WPM and timer */
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#progress-container {
+  display: flex;
+  justify-content: space-between;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+#restart-instruction {
+  font-size: 18px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.cursor {
+  border-left: 2px solid black;
+}
+
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
+}
+
+#restart-btn {
+  font-size: 18px;
+  padding: 8px 16px;
+  margin-top: 20px;
+  cursor: pointer;
+}

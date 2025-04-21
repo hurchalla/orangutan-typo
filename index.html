@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Game</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <h1>orangutan-typo</h1>
+    
+    <p id="fix-your-typos">Don't be a monkey. Fix your typos!</p>
+
+    <!-- Corruption Chance Controls -->
+    <div>
+      <label for="corruption-chance">Typo Chance:</label>
+      <input type="range" id="corruption-chance" min="0" max="100" value="10">
+      <span id="corruption-chance-value">10%</span>
+    </div>
+
+    <!-- Game UI Elements -->
+    <div id="words-display"></div>
+
+    <div id="progress-container">
+      <span id="wpm">WPM: 0.0</span>
+      <span id="timer">Time: 0s</span>
+    </div>
+
+    <div id="restart-instruction">
+      <p>Press Escape to restart the game.</p>
+    </div>
+
+    <button id="restart-btn" style="display: none;">Restart Game</button>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
