@@ -1,6 +1,6 @@
 const wordsList = [
   "the", "be", "of", "and", "a", "to", "in", "he", "have", "it",
-  "that", "for", "they", "I", "with", "as", "not", "on", "she", "at",
+  "that", "for", "they", "with", "as", "not", "on", "she", "at",
   "by", "this", "we", "you", "do", "but", "from", "or", "which", "one",
   "would", "all", "will", "there", "say", "who", "make", "when", "can", "more",
   "if", "no", "man", "out", "other", "so", "what", "time", "up", "go",
@@ -24,37 +24,78 @@ const wordsList = [
 const displayWords = document.getElementById('words-display');
 const wpmDisplay = document.getElementById('wpm');
 const timerDisplay = document.getElementById('timer');
-const restartBtn = document.getElementById('restart-btn');
+const restartBtn = document.getElementById('restart-button');
+
+const finishedMessage = document.getElementById('game-finished');
+
+const backspaceChanceInput = document.getElementById("backspace-slider");
+const backspaceValueDisplay = document.getElementById("backspace-slider-value");
 
 // Add references to the new input and label elements
-const corruptionChanceInput = document.getElementById('corruption-chance');
-const corruptionChanceValueDisplay = document.getElementById('corruption-chance-value');
+const corruptionChanceInput = document.getElementById('corruption-slider');
+const corruptionChanceValueDisplay = document.getElementById('corruption-slider-value');
+
+const backspaceSymbol = "\u232B";
+const typoBackspaceSymbol = "\u2190";  // left arrow
 
 let lines = [];
 let typedLines = [];
 let currentLineIndex = 0;
 let currentWordInLine = 0;
 let currentCharIndex = 0;
-let totalWords = 100;
+let totalWords = 60;
 let startTime = 0;
 let firstKeystroke = false;
 let timerInterval = null;
 let wpmInterval = null;
 
-function splitIntoLines(words, maxLineLength = 50) {
+function splitIntoLines(words, maxLineLength = 45) {
   const result = [];
   let line = [];
   let lineLength = 0;
 
+  const backspaceChance = parseFloat(backspaceChanceInput.value) / 100;
+
   for (const word of words) {
-    const extra = line.length > 0 ? word.length + 1 : word.length;
+    let modifiedWord = "";
+    let firstBackPosition = -1;
+    for (let i = 0; i < word.length; i++) {
+      modifiedWord += word[i];
+
+      let j = i;
+      let tmpPosition = firstBackPosition;
+      while (Math.random() < backspaceChance && j >= 0 && j >= firstBackPosition) {
+        tmpPosition = j;
+        modifiedWord += backspaceSymbol;
+        --j;
+      }
+      firstBackPosition = tmpPosition;
+      while (j < i) {
+        ++j;
+        modifiedWord += word[j];
+      }
+
+      tmpPosition = firstBackPosition;
+      while (Math.random() < backspaceChance && j >= 0 && j >= firstBackPosition) {
+        tmpPosition = j;
+        modifiedWord += backspaceSymbol;
+        --j;
+      }
+      firstBackPosition = tmpPosition;
+      while (j < i) {
+        ++j;
+        modifiedWord += word[j];
+      }
+    }
+
+    const extra = line.length > 0 ? modifiedWord.length + 1 : modifiedWord.length;
     if (lineLength + extra <= maxLineLength) {
-      line.push(word);
+      line.push(modifiedWord);
       lineLength += extra;
     } else {
       result.push(line);
-      line = [word];
-      lineLength = word.length;
+      line = [modifiedWord];
+      lineLength = modifiedWord.length;
     }
   }
 
@@ -109,7 +150,10 @@ function startGame() {
   currentCharIndex = 0;
   wpmDisplay.textContent = 'WPM: 0.0';
   timerDisplay.textContent = 'Time: 0s';
-  restartBtn.style.display = 'none';
+  restartBtn.style.display = 'block';
+  if (finishedMessage) {
+    finishedMessage.style.display = 'none';
+  }
 
   startTime = 0;
   firstKeystroke = false;
@@ -121,6 +165,7 @@ function startGame() {
   wpmInterval = setInterval(updateWPM, 1000);
   
   corruptionChanceValueDisplay.textContent = `${corruptionChanceInput.value}%`;
+  backspaceValueDisplay.textContent = `${backspaceChanceInput.value}%`;
 
   updateWordDisplay();
 }
@@ -186,10 +231,14 @@ function handleKeydown(event) {
           wordHasError = true;
         }
       }
+      const desiredKey = currentWord[typedWord.length];
+
       // randomly cause a typo if the current word doesn't have any errors yet.
       const corruptionChance = parseFloat(corruptionChanceInput.value) / 100; // Get the corruption chance from the input
-      const shouldCorrupt = !wordHasError && Math.random() < corruptionChance;
-      const charToAdd = shouldCorrupt ? 'X' : key;
+      const shouldCorrupt = key === desiredKey && !wordHasError && Math.random() < corruptionChance;
+      let charToAdd = shouldCorrupt ? 'X' : key;
+      if (key !== desiredKey && desiredKey === backspaceSymbol)
+        charToAdd = typoBackspaceSymbol;
       typedLines[currentLineIndex][currentWordInLine] += charToAdd;
     }
     // End the game when the user finishes typing the last word.
@@ -217,6 +266,21 @@ function handleKeydown(event) {
       currentWordInLine--;
       typedLines[currentLineIndex][currentWordInLine] = typedLines[currentLineIndex][currentWordInLine] || ''; // Ensure it's defined
     } else if (typedWord.length > 0) {
+      // handle when the desiredKey is the special backspace symbol
+      if (typedWord.length < currentWord.length) {
+        let wordHasError = false;
+        for (let i = 0; i < typedWord.length; i++) {
+          if (typedWord[i] !== currentWord[i]) {
+            wordHasError = true;
+          }
+        }
+        const desiredKey = currentWord[typedWord.length];
+        if (desiredKey === backspaceSymbol && !wordHasError) {
+          typedLines[currentLineIndex][currentWordInLine] += backspaceSymbol;
+          updateWordDisplay();
+          return; // Stop further Backspace handling
+        }
+      }
       // Backspace within a word
       typedLines[currentLineIndex][currentWordInLine] = typedWord.slice(0, -1);
     }
@@ -226,6 +290,7 @@ function handleKeydown(event) {
 
   updateWordDisplay();
 }
+
 
 function updateWordDisplay() {
   let html = '';
@@ -262,10 +327,21 @@ function updateWordDisplay() {
         html += word;
       }
 
-      if (j !== line.length - 1) html += ' ';
+      if (j !== line.length - 1) {
+        const space = ' ';
+        if (i === currentLineIndex && j === currentWordInLine && typedWord.length === word.length)
+          html += `<span class="cursor"></span>${space}`;
+        else
+          html += space;
+      } else {
+        if (i === currentLineIndex && j === currentWordInLine && typedWord.length === word.length)
+          html += `<span class="cursor"></span><br>`;
+        else
+          html += '<br>';
+      }
     }
-    html += '<br>';
   }
+  html += '<br>';
 
   displayWords.innerHTML = html;
 }
@@ -273,7 +349,9 @@ function updateWordDisplay() {
 function endGame() {
   clearInterval(timerInterval);
   clearInterval(wpmInterval);
-  restartBtn.style.display = 'block';
+  if (finishedMessage) {
+    finishedMessage.style.display = 'block';
+  }
 }
 
 restartBtn.addEventListener('click', () => {
@@ -290,6 +368,14 @@ document.addEventListener('keydown', (event) => {
 // Update the displayed corruption chance value when the user changes the slider
 corruptionChanceInput.addEventListener('input', () => {
   corruptionChanceValueDisplay.textContent = `${corruptionChanceInput.value}%`;
+});
+
+backspaceChanceInput.addEventListener("input", () => {
+  backspaceValueDisplay.textContent = `${backspaceChanceInput.value}%`;
+});
+
+backspaceChanceInput.addEventListener("change", () => {
+  startGame();
 });
 
 // Start the game on page load

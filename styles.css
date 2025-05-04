@@ -8,26 +8,61 @@ body {
 }
 
 #game-container {
+  display: block;
   text-align: center;
   max-width: 800px;
   width: 100%;
 }
 
-#corruption-container {
-  margin-bottom: 20px;
+#middle-container {
+  display: flex;
+  flex-direction: column;  /* Stacks the children (corruption and backspace containers) vertically */
+  align-items: flex-start; /* Aligns the sliders to the left (optional, you can center them if you like) */
+}
+
+#corruption-container, #backspace-container {
+  margin-bottom: 7px;
   margin-top: 7px;
+}
+
+#restart-container {
+  margin-top: 35px;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+#restart-button {
+/*  padding: 0.4em 0.8em;        /* Adds some space inside the button */
+/*  font-size: 1em;              /* Ensures consistent size with rest of UI */
+  padding: 0.5em 0.9em; /* Increased padding for a larger button */
+  font-size: 1em;    /* Slightly increase font size */
+
+  line-height: 1.2;            /* Helps with vertical centering */
+  /* Optional for aesthetics */
+  border-radius: 4px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+}
+
+#restart-hint {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
 }
 
 #words-display {
   font-size: 36px; /* Larger font size for words */
   line-height: 44px;
-  margin-bottom: 20px;
+  margin-bottom: 0px;
+  margin-top: 40px;
   text-align: left;
   white-space: nowrap; /* Prevent wrapping */
   overflow-wrap: break-word;
   word-wrap: break-word;
   user-select: none;
 }
+
 
 #wpm, #timer {
   font-size: 28px; /* Increased font size for WPM and timer */
@@ -40,12 +75,7 @@ body {
   justify-content: space-between;
   font-size: 20px;
   margin-bottom: 10px;
-}
-
-#restart-instruction {
-  font-size: 18px;
-  color: #333;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
 .cursor {
@@ -60,9 +90,12 @@ body {
   color: red;
 }
 
-#restart-btn {
-  font-size: 18px;
-  padding: 8px 16px;
-  margin-top: 20px;
-  cursor: pointer;
+
+#game-finished {
+  margin-top: 0px;
+  margin-bottom: 30px;
+  display: none;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
 }

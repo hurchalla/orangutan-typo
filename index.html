@@ -17,22 +17,28 @@
     <!-- Game UI Elements -->
     <div id="words-display"></div>
 
+    <div id="game-finished">Finished!</div>
+
     <div id="progress-container">
       <span id="wpm">WPM: 0.0</span>
-      <!-- Corruption Chance Controls -->
-      <div id="corruption-container">
-          <label for="corruption-chance">Typo Chance:</label>
-          <input type="range" id="corruption-chance" min="0" max="50" value="7">
-          <span id="corruption-chance-value">7%</span>
+      <!-- Slider Controls -->
+      <div id="middle-container">
+        <div id="corruption-container">
+            <label for="corruption-slider">Auto-Typo Chance: <span id="corruption-slider-value">7%</span></label>
+            <input type="range" id="corruption-slider" min="0" max="50" value="7">
+        </div>
+        <div id="backspace-container">
+          <label for="backspace-slider">Backspace Insertions: <span id="backspace-slider-value">0%</span></label>
+          <input type="range" id="backspace-slider" min="0" max="30" value="0" />
+        </div>
+        <div id="restart-container">
+          <button id="restart-button">Restart Game</button>
+          <span id="restart-hint">(Or press Escape to restart)</span>
+        </div>
       </div>
       <span id="timer">Time: 0s</span>
     </div>
 
-    <div id="restart-instruction">
-      <p>Press Escape to restart the game.</p>
-    </div>
-
-    <button id="restart-btn" style="display: none;">Restart Game</button>
   </div>
 
   <script src="game.js"></script>
